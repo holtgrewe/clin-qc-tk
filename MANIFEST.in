@@ -1,0 +1,6 @@
+include versioneer.py
+include qctk/_version.py
+include *.rst
+include *.txt requirements/*.txt
+
+recursive-include qctk *.py *.yml *.yaml Snakefile
