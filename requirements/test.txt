@@ -1,0 +1,10 @@
+-r base.txt
+
+pytest<6  # 6.x not compatible with pyfakefs yet
+pytest-sugar
+pytest-coverage
+pytest-pep8
+pyfakefs
+black
+pylint
+pycodestyle

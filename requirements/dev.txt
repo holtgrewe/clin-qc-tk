@@ -1,9 +1,3 @@
-black
-pytest<6  # 6.x not compatible with pyfakefs yet
-pytest-sugar
-pytest-coverage
-pytest-pep8
-pyfakefs
+-r test.txt
+
 mypy
-pylint
-pycodestyle
