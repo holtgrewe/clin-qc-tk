@@ -103,7 +103,7 @@ def guess_sample_id(alif: pysam.AlignmentFile) -> str:
     result = None
     for line in alif.header.get("RG", []):
         if result:
-            if line.get("SM", line.get("ID")) != result:
+            if line.get("SM", line.get("ID")) != result:  # pragma: no cover
                 logger.error("Found more than one sample name in BAM file read group.")
                 logger.error(
                     "Hint: check for problems with the data and override by specifying "
@@ -113,7 +113,7 @@ def guess_sample_id(alif: pysam.AlignmentFile) -> str:
         else:
             result = line.get("SM", line.get("ID"))
 
-    if not result:
+    if not result:  # pragma: no cover
         logger.error("Found no read group in BAM file.")
         logger.error(
             "Hint: check for problems with the data and override by specifying "

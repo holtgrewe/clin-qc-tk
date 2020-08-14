@@ -23,7 +23,7 @@ def _fastq_kmers_run(
         print("#" + "\t".join(fastq.KmerInfo.headers()), file=outputf)
         for siteno, site in enumerate(sites):
             kmer = fastaf.fetch(site.chromosome, site.position - delta - 1, site.position + delta)
-            if not kmer[delta] == site.reference:
+            if not kmer[delta] == site.reference:  # pragma: no cover
                 raise Exception(
                     "Expected %s:%d to be %s but is %s!"
                     % (site.chromosome, site.position, site.reference, kmer[delta])
@@ -48,7 +48,7 @@ def fastq_kmers_run(config: FastqKmersConfig) -> int:
     logger.info("Running fastq-kmers")
     logger.info("Configuration: %s", config)
 
-    if not pathlib.Path(config.output_tsv).parent.exists():
+    if not pathlib.Path(config.output_tsv).parent.exists():  # pragma: no cover
         logger.error("Path to output file %s does not exist!", config.output_tsv)
         return 1
 
@@ -66,13 +66,13 @@ def fastq_kmers_run(config: FastqKmersConfig) -> int:
     logger.info("Generating kmers...")
     if config.output_tsv.endswith(".gz"):
         with gzip.open(config.output_tsv, "wt") as outputf:
-            return _fastq_kmers_run(config, sites, outputf)
+            res = _fastq_kmers_run(config, sites, outputf)
     else:
         with open(config.output_tsv, "wt") as outputf:
-            return _fastq_kmers_run(config, sites, outputf)
+            res = _fastq_kmers_run(config, sites, outputf)
 
     logger.info("All done. Have a nice day!")
-    return 0
+    return res
 
 
 def fastq_kmers_main(args: argparse.Namespace) -> int:

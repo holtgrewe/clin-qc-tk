@@ -29,7 +29,8 @@ class Genotype(enum.Enum):
         for release in cls:
             if release.value == val:
                 return release
-        raise ValueError("Could not get release for value %s" % value)
+        else:  # pragma: no cover
+            raise ValueError("Could not get release for value %s" % value)
 
 
 @attr.s(auto_attribs=True, frozen=True)
@@ -117,7 +118,7 @@ def read_sites(
                         )
                     )
                 else:
-                    break
+                    break  # pragma: no cover
 
     return result
 

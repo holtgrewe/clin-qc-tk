@@ -44,3 +44,16 @@ def test_bam_extract_run_smoke_test(tmp_path):
         "alternative": "T",
     }
     assert data[1]["stats"] == {"genotype": "1/1", "total_cov": 76, "alt_cov": 73}
+
+
+def test_identity():
+    assert extract.identity("chr1") == "chr1"
+    assert extract.identity("1") == "1"
+
+
+def test_add_prefix():
+    assert extract.add_prefix("1") == "chr1"
+
+
+def test_strip_prefix():
+    assert extract.strip_prefix("chr1") == "1"
