@@ -3,7 +3,6 @@ sites.
 """
 
 import argparse
-import gzip
 import hashlib
 import itertools
 import json
@@ -15,29 +14,15 @@ from logzero import logger
 import pysam
 
 from .config import GenomeRelease, FastqExtractConfig, DEFAULT_GENOME_RELEASE, DEFAULT_THRESHOLD
+from ..common import revcomp
 from ..models.fastq import read_kmer_infos, KmerInfo
-from ..models.vcf import SiteStats, VariantStats, Genotype
+from ..models.vcf import SiteStats, VariantStats, Genotype, write_site_stats
 
 #: Genome release to file name.
 _KMER_FILES = {
     GenomeRelease.GRCH37: "kmers.GRCh37.tsv.gz",
     GenomeRelease.GRCH38: "kmers.hg38.tsv.gz",
 }
-
-_RC = {
-    "c": "g",
-    "C": "G",
-    "g": "c",
-    "G": "C",
-    "t": "a",
-    "T": "A",
-    "t": "t",
-    "A": "T",
-}
-
-
-def revcomp(nts: str) -> str:
-    return "".join(map(lambda x: _RC.get(x, x), nts))
 
 
 class KmerCounter:
@@ -108,15 +93,7 @@ def _fastq_extract_impl(
             )
         )
 
-    sample_hash = hashlib.sha256(config.sample_id.encode("utf-8")).hexdigest()
-    output_path = (
-        pathlib.Path(config.common.storage_path) / sample_hash[:2] / (sample_hash + ".json")
-    )
-    output_path.parent.mkdir()
-    logger.info("Writing results to %s", output_path)
-    with output_path.open("wt") as outputf:
-        json.dump(cattr.unstructure(result), outputf)
-    return output_path
+    return write_site_stats(result, config.common.storage_path, config.sample_id)
 
 
 def fastq_extract_run(config: FastqExtractConfig) -> int:

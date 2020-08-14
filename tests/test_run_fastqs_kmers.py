@@ -1,7 +1,5 @@
 """Test for ``fastq-kmers``"""
 
-import os
-
 from qctk.fastq.config import FastqKmersConfig
 from qctk.config import CommonConfig
 from qctk.fastq import kmers

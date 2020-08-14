@@ -1,34 +1,31 @@
-"""Test for ``fastq-extract``"""
+"""Test for ``bam-extract``"""
 
 import hashlib
 import json
 
 from qctk.config import CommonConfig
-from qctk.fastq import extract
-from qctk.fastq.config import FastqExtractConfig
+from qctk.bam import extract
+from qctk.bam.config import BamExtractConfig
 
 
-# TODO: run from command line / mock out fastq_extract_run
+# TODO: run from command line / mock out bam_extract_run
 
 
-def test_fastq_extract_run_smoke_test(tmp_path, small_kmers_info_path):
+def test_bam_extract_run_smoke_test(tmp_path):
     path_storage = tmp_path / "storage"
     path_storage.mkdir()
 
     # Exercise the code.
-    config = FastqExtractConfig(
+    config = BamExtractConfig(
         common=CommonConfig(
             storage_path=str(path_storage), reference="tests/data/small/ref.fasta",
         ),
-        sample_id="test-sample",
-        input_files=[
-            "tests/data/small/reads_singleton1_1.fq.gz",
-            "tests/data/small/reads_singleton1_2.fq.gz",
-        ],
-        kmer_infos=small_kmers_info_path,
+        input_files=["tests/data/small/reads_singleton1.bam",],
+        sites_vcf="tests/data/small/vars_ontarget.vcf.gz",
         genome_release="test-small",
+        sample_id="test-sample",
     )
-    res = extract.fastq_extract_run(config)
+    res = extract.bam_extract_run(config)
 
     sample_hash = hashlib.sha256("test-sample".encode("utf-8")).hexdigest()
 
@@ -46,4 +43,4 @@ def test_fastq_extract_run_smoke_test(tmp_path, small_kmers_info_path):
         "reference": "A",
         "alternative": "T",
     }
-    assert data[1]["stats"] == {"genotype": "1/1", "total_cov": 29, "alt_cov": 29}
+    assert data[1]["stats"] == {"genotype": "1/1", "total_cov": 76, "alt_cov": 73}

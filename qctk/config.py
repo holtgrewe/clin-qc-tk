@@ -9,6 +9,13 @@ import attr
 import cattr
 
 
+#: Default k-mer length to use.
+DEFAULT_KMER_LENGTH = 21
+
+#: Default thershold to use.
+DEFAULT_THRESHOLD = 0.1
+
+
 #: Enumeration of the supported storage engines.
 class StorageEngine(enum.Enum):
     #: Auto-detect storage engine by path's extension.

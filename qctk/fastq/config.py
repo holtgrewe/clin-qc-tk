@@ -1,40 +1,14 @@
 """Configuration for the commands implemented in the ``fastq`` module."""
 
 import argparse
-import enum
 import types
 import typing
 
 import attr
 import cattr
 
-from ..config import CommonConfig
-
-#: Default k-mer length to use.
-DEFAULT_KMER_LENGTH = 21
-
-#: Default thershold to use.
-DEFAULT_THRESHOLD = 0.1
-
-_TGenomeRelease = typing.TypeVar("GenomeRelease")
-
-
-class GenomeRelease(enum.Enum):
-    #: GRCh37 release.
-    GRCH37 = "GRCh37"
-    #: GRCh38 release.
-    GRCH38 = "GRCh38"
-
-    @classmethod
-    def from_value(cls, value: str) -> _TGenomeRelease:
-        for release in cls:
-            if release.value == value:
-                return release
-        raise ValueError("Could not get release for value %s" % value)
-
-
-#: The default genome release.
-DEFAULT_GENOME_RELEASE = GenomeRelease.GRCH37
+from ..common import GenomeRelease, DEFAULT_GENOME_RELEASE, flatten_list
+from ..config import CommonConfig, DEFAULT_KMER_LENGTH, DEFAULT_THRESHOLD
 
 
 _TBaseConfig = typing.TypeVar("_BaseConfig")
@@ -90,7 +64,7 @@ class FastqExtractConfig(_BaseConfig):
     kmer_infos: typing.Optional[str]
 
     #: The genome release to select the sites VCF file for, by default GRCh37 will be used.
-    genome_release: GenomeRelease = GenomeRelease.GRCH37
+    genome_release: GenomeRelease = DEFAULT_GENOME_RELEASE
 
     #: The default threshold to use.
     threshold: float = DEFAULT_THRESHOLD
@@ -99,5 +73,5 @@ class FastqExtractConfig(_BaseConfig):
     def from_namespace(
         cls, ns: typing.Union[argparse.Namespace, types.SimpleNamespace]
     ) -> _TBaseConfig:
-        ns.input_files = [item for sublist in ns.input_files for item in sublist]
+        ns.input_files = flatten_list(ns.input_files)
         return cattr.structure({"common": vars(ns), **vars(ns)}, cls)

@@ -11,14 +11,8 @@ from logzero import logger
 import pysam
 
 from .config import FastqKmersConfig, DEFAULT_KMER_LENGTH, GenomeRelease, DEFAULT_GENOME_RELEASE
+from ..common import SITES_VCFS
 from ..models import vcf, fastq
-
-
-#: Genome release to file name.
-_SITE_FILES = {
-    GenomeRelease.GRCH37: "sites.GRCh37.vcf.gz",
-    GenomeRelease.GRCH38: "sites.hg38.vcf.gz",
-}
 
 
 def _fastq_kmers_run(
@@ -65,7 +59,7 @@ def fastq_kmers_run(config: FastqKmersConfig) -> int:
     path_vcf = (
         config.sites_vcf
         if config.sites_vcf
-        else _SITE_FILES[GenomeRelease.from_value(genome_release)]
+        else SITES_VCFS[GenomeRelease.from_value(genome_release)]
     )
     sites = vcf.read_sites(path=path_vcf, genome_release=genome_release, max_sites=config.max_sites)
 

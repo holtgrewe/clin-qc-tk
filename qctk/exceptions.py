@@ -7,3 +7,7 @@ class QctkException(Exception):
 
 class KmerInfosIoError(Exception):
     """Raised when kmer infos could not be loaded."""
+
+
+class SampleNameGuessingError(Exception):
+    """Raised when sample name guessing failed."""
