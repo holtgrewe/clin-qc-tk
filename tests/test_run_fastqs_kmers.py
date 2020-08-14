@@ -1,9 +1,11 @@
 """Test for ``fastq-kmers``"""
 
+from qctk.config import CommonConfig, StorageEngine, DEFAULT_THRESHOLD
+from qctk.common import GenomeRelease
 from qctk.fastq.config import FastqKmersConfig
-from qctk.config import CommonConfig
 from qctk.fastq import kmers
 from qctk.models import fastq
+from qctk.__main__ import main
 
 
 # TODO: run from command line / mock out fastq_kmers_run
@@ -33,3 +35,33 @@ def test_fastq_kmers_run_smoke_test(tmp_path):
     assert lines[1] == "test-small\tcontig\t16556\tT\tA\tATTTTCCTCATTGAAGATATT"
     assert lines[-2] == "test-small\tcontig\t82577\tC\tG\tCCCGCCATACCGGCCGGGGCG"
     assert lines[-1] == ""
+
+
+def test_fastq_kmers_via_args(mocker):
+    mocker.patch.object(kmers, "fastq_kmers_run")
+    main(
+        [
+            "--reference",
+            "/path/reference.fasta",
+            "fastq-kmers",
+            "--sites-vcf",
+            "/path/sites.vcf.gz",
+            "--output-tsv",
+            "/path/output.tsv.gz",
+        ]
+    )
+    kmers.fastq_kmers_run.assert_called_once_with(
+        FastqKmersConfig(
+            common=CommonConfig(
+                storage_path=None,
+                verbose=False,
+                quiet=False,
+                storage_engine=StorageEngine.AUTO,
+                reference="/path/reference.fasta",
+            ),
+            sites_vcf="/path/sites.vcf.gz",
+            output_tsv="/path/output.tsv.gz",
+            max_sites=None,
+            genome_release=GenomeRelease.GRCH37.value,
+        )
+    )

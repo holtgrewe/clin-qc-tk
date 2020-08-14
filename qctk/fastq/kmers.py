@@ -83,9 +83,14 @@ def fastq_kmers_main(args: argparse.Namespace) -> int:
     return fastq_kmers_run(FastqKmersConfig.from_namespace(args))
 
 
-def fastq_kmers_config_parser(parser: argparse.ArgumentParser) -> None:
+def fastq_kmers_config_parser(subparsers: argparse._SubParsersAction) -> None:
     """Add command "fastq-kmers" to argument parser."""
-    parser.add_argument("--hidden-cmd", dest="cmd", default=fastq_kmers_run, help=argparse.SUPPRESS)
+    parser = subparsers.add_parser(
+        "fastq-kmers", help="Build k-mers file from sites VCF and reference."
+    )
+    parser.add_argument(
+        "--hidden-cmd", dest="cmd", default=fastq_kmers_main, help=argparse.SUPPRESS
+    )
 
     parser.add_argument(
         "--output-tsv",
@@ -100,6 +105,7 @@ def fastq_kmers_config_parser(parser: argparse.ArgumentParser) -> None:
     )
     parser.add_argument(
         "--sites-vcf",
+        required=True,
         help="Path to sites VCF file, by default the one shipping with qctk will be used",
     )
     parser.add_argument(

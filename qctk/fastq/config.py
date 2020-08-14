@@ -46,7 +46,7 @@ class FastqKmersConfig(_BaseConfig):
     sites_vcf: typing.Optional[str] = None
 
     #: The genome release to select the sites VCF file for, by default GRCh37 will be used.
-    genome_release: GenomeRelease = GenomeRelease.GRCH37
+    genome_release: str = GenomeRelease.GRCH37.value
 
 
 @attr.s(auto_attribs=True, frozen=True)
@@ -64,7 +64,7 @@ class FastqExtractConfig(_BaseConfig):
     kmer_infos: typing.Optional[str]
 
     #: The genome release to select the sites VCF file for, by default GRCh37 will be used.
-    genome_release: GenomeRelease = DEFAULT_GENOME_RELEASE
+    genome_release: str = DEFAULT_GENOME_RELEASE.value
 
     #: The default threshold to use.
     threshold: float = DEFAULT_THRESHOLD

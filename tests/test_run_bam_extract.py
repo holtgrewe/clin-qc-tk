@@ -3,9 +3,11 @@
 import hashlib
 import json
 
-from qctk.config import CommonConfig
+from qctk.config import CommonConfig, StorageEngine
+from qctk.common import GenomeRelease
 from qctk.bam import extract
 from qctk.bam.config import BamExtractConfig
+from qctk.__main__ import main
 
 
 # TODO: run from command line / mock out bam_extract_run
@@ -44,6 +46,37 @@ def test_bam_extract_run_smoke_test(tmp_path):
         "alternative": "T",
     }
     assert data[1]["stats"] == {"genotype": "1/1", "total_cov": 76, "alt_cov": 73}
+
+
+def test_bam_extract_via_args(mocker):
+    mocker.patch.object(extract, "bam_extract_run")
+    main(
+        [
+            "--storage-path",
+            "/path/storage",
+            "--reference",
+            "/path/reference.fasta",
+            "bam-extract",
+            "--input-files",
+            "/path/input.bam",
+        ]
+    )
+    extract.bam_extract_run.assert_called_once_with(
+        BamExtractConfig(
+            common=CommonConfig(
+                storage_path="/path/storage",
+                verbose=False,
+                quiet=False,
+                storage_engine=StorageEngine.AUTO,
+                reference="/path/reference.fasta",
+            ),
+            input_files=["/path/input.bam"],
+            sites_vcf=None,
+            sample_id=None,
+            genome_release=GenomeRelease.GRCH37.value,
+            max_sites=None,
+        )
+    )
 
 
 def test_identity():

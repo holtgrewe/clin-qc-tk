@@ -169,11 +169,12 @@ def bam_extract_run(config: BamExtractConfig) -> int:
     logger.info("Configuration: %s", config)
 
     # TODO: storage plug and play
-    if not pathlib.Path(config.common.storage_path).exists():
-        logger.error("Storage path does not exist: %s", config.common.storage_path)
-        return 1
+    pathlib.Path(config.common.storage_path).mkdir(parents=True, exist_ok=True)
     if not pathlib.Path(config.common.reference).exists():
-        logger.error("Must provided --reference!")
+        logger.error("The --reference path must exist!")
+        return 1
+    if not config.common.storage_path:
+        logger.error("--storage-path must be provided!")
         return 1
 
     logger.info("Loading sites...")
@@ -202,9 +203,14 @@ def bam_extract_main(args: argparse.Namespace) -> int:
     return bam_extract_run(BamExtractConfig.from_namespace(args))
 
 
-def bam_extract_config_parser(parser: argparse.ArgumentParser) -> None:
+def bam_extract_config_parser(subparsers: argparse._SubParsersAction) -> None:
     """Add command "Bam-extract" to argument parser."""
-    parser.add_argument("--hidden-cmd", dest="cmd", default=bam_extract_run, help=argparse.SUPPRESS)
+    parser = subparsers.add_parser(
+        "bam-extract", help="Extract fingerprint information from BAM file."
+    )
+    parser.add_argument(
+        "--hidden-cmd", dest="cmd", default=bam_extract_main, help=argparse.SUPPRESS
+    )
 
     parser.add_argument(
         "--sample-id",

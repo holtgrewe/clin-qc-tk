@@ -130,7 +130,7 @@ def write_site_stats(site_stats: typing.List[SiteStats], storage_path: str, samp
     output_path = (
         pathlib.Path(storage_path) / sample_hash[:2] / sample_hash[:4] / (sample_hash + ".json")
     )
-    output_path.parent.mkdir(parents=True)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
     logger.info("Writing results to %s", output_path)
     with output_path.open("wt") as outputf:
         json.dump(cattr.unstructure(site_stats), outputf)

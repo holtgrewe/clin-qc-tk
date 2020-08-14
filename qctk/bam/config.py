@@ -6,7 +6,7 @@ import cattr
 import types
 import typing
 
-from ..common import GenomeRelease, DEFAULT_GENOME_RELEASE
+from ..common import GenomeRelease, DEFAULT_GENOME_RELEASE, flatten_list
 from ..config import CommonConfig
 
 _TBaseConfig = typing.TypeVar("_BaseConfig")
@@ -19,10 +19,12 @@ class _BaseConfig:
     #: Common configuration.
     common: CommonConfig
 
+    @classmethod
     def from_namespace(
-        self, ns: typing.Union[argparse.Namespace, types.SimpleNamespace]
+        cls, ns: typing.Union[argparse.Namespace, types.SimpleNamespace]
     ) -> _TBaseConfig:
-        return cattr.structure({"common": vars(ns), **vars(ns)}, CommonConfig)
+        ns.input_files = flatten_list(ns.input_files)
+        return cattr.structure({"common": vars(ns), **vars(ns)}, cls)
 
 
 @attr.s(auto_attribs=True, frozen=True)
@@ -45,7 +47,7 @@ class BamExtractConfig(_BaseConfig):
     sample_id: typing.Optional[str] = None
 
     #: The genome release to select the sites VCF file for, by default GRCh37 will be used.
-    genome_release: GenomeRelease = DEFAULT_GENOME_RELEASE
+    genome_release: str = DEFAULT_GENOME_RELEASE.value
 
     #: The maximal number of sites to process, ``None``/``0`` for no limit.
     max_sites: typing.Optional[int] = None

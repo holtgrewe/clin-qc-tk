@@ -104,10 +104,12 @@ def fastq_extract_run(config: FastqExtractConfig) -> int:
     logger.info("Running fastq-extract")
     logger.info("Configuration: %s", config)
 
-    # TODO: storage plug and play
-    if not pathlib.Path(config.common.storage_path).exists():
-        logger.error("Storage path does not exist: %s", config.common.storage_path)
+    if not config.common.storage_path:
+        logger.error("--storage-path must be provided!")
         return 1
+
+    # TODO: storage plug and play
+    pathlib.Path(config.common.storage_path).mkdir(parents=True, exist_ok=True)
 
     logger.info("Loading kmers...")
     genome_release = (
@@ -134,10 +136,13 @@ def fastq_extract_main(args: argparse.Namespace) -> int:
     return fastq_extract_run(FastqExtractConfig.from_namespace(args))
 
 
-def fastq_extract_config_parser(parser: argparse.ArgumentParser) -> None:
+def fastq_extract_config_parser(subparsers: argparse._SubParsersAction) -> None:
     """Add command "fastq-extract" to argument parser."""
+    parser = subparsers.add_parser(
+        "fastq-extract", help="Extract fingerprint information from FASTQ file."
+    )
     parser.add_argument(
-        "--hidden-cmd", dest="cmd", default=fastq_extract_run, help=argparse.SUPPRESS
+        "--hidden-cmd", dest="cmd", default=fastq_extract_main, help=argparse.SUPPRESS
     )
 
     parser.add_argument(

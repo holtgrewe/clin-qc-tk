@@ -48,17 +48,17 @@ def bash_scripts(names):
 
 
 setup(
-    name="ngs-chew",
+    name="clin-qc-tk",
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
-    description="NGS Chew",
+    description="Quality Control for Clinical NGS Data",
     long_description=readme + "\n\n" + history,
     author="Manuel Holtgrewe",
     author_email="manuel.holtgrewe@bihealth.de",
-    url="https://github.com/bihealth/ngs-chew",
+    url="https://github.com/bihealth/clin-qc-tk",
     packages=find_packages(),
-    package_dir={"chew": "chew"},
-    entry_points={"console_scripts": (("ngs-chew=chew.__main__:main",),)},
+    package_dir={"qctk": "qctk"},
+    entry_points={"console_scripts": (("qctk=qctk.__main__:main",),)},
     include_package_data=True,
     install_requires=requirements,
     license="MIT license",

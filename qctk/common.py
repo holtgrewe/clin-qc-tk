@@ -26,8 +26,8 @@ DEFAULT_GENOME_RELEASE = GenomeRelease.GRCH37
 
 #: Genome release to file name.
 SITES_VCFS = {
-    GenomeRelease.GRCH37: pathlib.Path(__file__).parent.parent / "sites.GRCh37.vcf.gz",
-    GenomeRelease.GRCH38: pathlib.Path(__file__).parent.parent / "sites.hg38.vcf.gz",
+    GenomeRelease.GRCH37: pathlib.Path(__file__).parent / "data" / "sites.GRCh37.vcf.gz",
+    GenomeRelease.GRCH38: pathlib.Path(__file__).parent / "data" / "sites.hg38.vcf.gz",
 }
 
 

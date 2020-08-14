@@ -4,6 +4,7 @@ pytest<6  # 6.x not compatible with pyfakefs yet
 pytest-sugar
 pytest-coverage
 pytest-pep8
+pytest-mock
 pyfakefs
 black
 pylint
