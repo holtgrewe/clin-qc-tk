@@ -1,7 +1,6 @@
 """CLI entry point for qctk."""
 
 import argparse
-import sys
 
 from logzero import logger
 

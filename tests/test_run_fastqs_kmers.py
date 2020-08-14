@@ -1,6 +1,6 @@
 """Test for ``fastq-kmers``"""
 
-from qctk.config import CommonConfig, StorageEngine, DEFAULT_THRESHOLD
+from qctk.config import CommonConfig, StorageEngine
 from qctk.common import GenomeRelease
 from qctk.fastq.config import FastqKmersConfig
 from qctk.fastq import kmers
