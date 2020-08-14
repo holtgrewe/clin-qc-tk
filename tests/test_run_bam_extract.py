@@ -10,9 +10,6 @@ from qctk.bam.config import BamExtractConfig
 from qctk.__main__ import main
 
 
-# TODO: run from command line / mock out bam_extract_run
-
-
 def test_bam_extract_run_smoke_test(tmp_path):
     path_storage = tmp_path / "storage"
     path_storage.mkdir()
@@ -33,19 +30,20 @@ def test_bam_extract_run_smoke_test(tmp_path):
 
     # Check results.
     assert res == 0
-    output_path = path_storage / sample_hash[:2] / sample_hash[:4] / (sample_hash + ".json")
+    output_path = path_storage / sample_hash[:2] / sample_hash[:4] / (sample_hash + "-stats.json")
     assert output_path.exists()
     with output_path.open("rt") as jsonf:
         data = json.load(jsonf)
-    assert len(data) == 84
-    assert data[1]["site"] == {
+    assert len(data) == 2
+    assert len(data["site_stats"]) == 84
+    assert data["site_stats"][1]["site"] == {
         "genome_release": "test-small",
         "chromosome": "contig",
         "position": 16570,
         "reference": "A",
         "alternative": "T",
     }
-    assert data[1]["stats"] == {"genotype": "1/1", "total_cov": 76, "alt_cov": 73}
+    assert data["site_stats"][1]["stats"] == {"genotype": "1/1", "total_cov": 76, "alt_cov": 73}
 
 
 def test_bam_extract_via_args(mocker):

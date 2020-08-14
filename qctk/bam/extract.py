@@ -10,8 +10,8 @@ from logzero import logger
 import pysam
 import vcfpy
 
-from .config import GenomeRelease, BamExtractConfig, DEFAULT_GENOME_RELEASE
-from ..common import SITES_VCFS
+from .config import BamExtractConfig, DEFAULT_GENOME_RELEASE
+from ..common import GenomeRelease, SITES_VCFS
 from ..exceptions import SampleNameGuessingError
 from ..models import vcf
 
@@ -150,7 +150,8 @@ def _bam_extract_impl_for_file(
         path_sites_bed = write_sites_bed(config, func_pref, sites, str(tmp_dir))
         path_calls_vcf = call_sites(config, path_sites_bed, path_bam, str(tmp_dir))
         site_stats = calls_to_site_stats(config, sites, path_calls_vcf)
-        path_json = vcf.write_site_stats(site_stats, config.common.storage_path, sample_id)
+        sample_stats = vcf.SampleStats(sample=vcf.Sample(name=sample_id), site_stats=site_stats,)
+        path_json = vcf.write_site_stats(sample_stats, config.common.storage_path, sample_id)
         logger.info("Wrote site-wise stats to %s", path_json)
 
 

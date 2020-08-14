@@ -2,6 +2,7 @@
 
 import enum
 import hashlib
+import math
 import pathlib
 import typing
 
@@ -86,6 +87,58 @@ class SiteStats:
     stats: VariantStats
 
 
+@attr.s(auto_attribs=True, frozen=True)
+class Sample:
+    """Information regarding a sample."""
+
+    #: Sample identifier.
+    name: str
+
+
+@attr.s(auto_attribs=True, frozen=True)
+class SampleStats:
+    """Information about variant statistics per sample."""
+
+    #: The sample information.
+    sample: Sample
+    #: The site-wise variant statistics.
+    site_stats: typing.List[SiteStats]
+
+
+@attr.s(auto_attribs=True, frozen=True)
+class SimilarityPair:
+    """Store information about the similarity of a sample pair.
+
+    By convention, the first sample is the lexicographically smaller one.
+    """
+
+    #: First sample.
+    sample_i: str
+    #: Second sample.
+    sample_j: str
+    #: Number of sites sharing no allele.
+    n_ibs0: int
+    #: Number of sites sharing one allele.
+    n_ibs1: int
+    #: Number of sites sharing both alleles.
+    n_ibs2: int
+    #: Number of sites where sample i is heterozygous.
+    het_i: int
+    #: Number of sites where sample j is heterozygous.
+    het_j: int
+    #: Number of sites where both samples are heterozygous.
+    het_i_j: int
+
+    @property
+    def relatedness(self):
+        """Compute peddy relatedness."""
+        return (self.het_i_j - 2 * self.n_ibs0) / (0.5 * math.sqrt(self.het_i * self.het_j))
+
+    @property
+    def key(self):
+        return (self.sample_i, self.sample_j)
+
+
 def read_sites(
     *,
     path: typing.Optional[typing.Union[str, pathlib.Path]] = None,
@@ -123,13 +176,24 @@ def read_sites(
     return result
 
 
+def hash_sample_id(sample_id: str) -> str:
+    return hashlib.sha256(sample_id.encode("utf-8")).hexdigest()
+
+
+def sample_path(storage_path: str, sample_id: str) -> pathlib.Path:
+    sample_hash = hash_sample_id(sample_id)
+    output_path = (
+        pathlib.Path(storage_path)
+        / sample_hash[:2]
+        / sample_hash[:4]
+        / (sample_hash + "-stats.json")
+    )
+    return output_path
+
+
 def write_site_stats(site_stats: typing.List[SiteStats], storage_path: str, sample_id: str) -> str:
     """Write site stats to the storage path and return path to JSON."""
-    # TODO: pluggable storage
-    sample_hash = hashlib.sha256(sample_id.encode("utf-8")).hexdigest()
-    output_path = (
-        pathlib.Path(storage_path) / sample_hash[:2] / sample_hash[:4] / (sample_hash + ".json")
-    )
+    output_path = sample_path(storage_path, sample_id)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     logger.info("Writing results to %s", output_path)
     with output_path.open("wt") as outputf:

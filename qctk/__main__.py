@@ -9,6 +9,7 @@ from .config import StorageEngine
 from .bam.extract import bam_extract_config_parser
 from .fastq.kmers import fastq_kmers_config_parser
 from .fastq.extract import fastq_extract_config_parser
+from .compare.compare import compare_compare_config_parser
 
 
 def main(argv=None):
@@ -34,6 +35,7 @@ def main(argv=None):
     bam_extract_config_parser(subparser)
     fastq_kmers_config_parser(subparser)
     fastq_extract_config_parser(subparser)
+    compare_compare_config_parser(subparser)
 
     args = parser.parse_args(argv)
     logger.info("Options: %s" % vars(args))

@@ -6,7 +6,7 @@ import cattr
 import types
 import typing
 
-from ..common import GenomeRelease, DEFAULT_GENOME_RELEASE, flatten_list
+from ..common import DEFAULT_GENOME_RELEASE, flatten_list
 from ..config import CommonConfig
 
 _TBaseConfig = typing.TypeVar("_BaseConfig")

@@ -16,7 +16,7 @@ import pysam
 from .config import GenomeRelease, FastqExtractConfig, DEFAULT_GENOME_RELEASE, DEFAULT_THRESHOLD
 from ..common import revcomp
 from ..models.fastq import read_kmer_infos, KmerInfo
-from ..models.vcf import SiteStats, VariantStats, Genotype, write_site_stats
+from ..models.vcf import SiteStats, VariantStats, Genotype, SampleStats, Sample, write_site_stats
 
 #: Genome release to file name.
 _KMER_FILES = {
@@ -76,13 +76,13 @@ def _fastq_extract_impl(
                     else:
                         counter.tally(kmer)
 
-    result = []
+    site_stats = []
     for kmer_info in kmer_infos:
         ref_kmer = kmer_info.ref_kmer
         ref_depth = counter.counts[ref_kmer] + counter.counts[revcomp(ref_kmer)]
         alt_kmer = kmer_info.alt_kmer
         alt_depth = counter.counts[alt_kmer] + counter.counts[revcomp(alt_kmer)]
-        result.append(
+        site_stats.append(
             SiteStats(
                 site=kmer_info.site,
                 stats=VariantStats(
@@ -93,7 +93,9 @@ def _fastq_extract_impl(
             )
         )
 
-    return write_site_stats(result, config.common.storage_path, config.sample_id)
+    sample_stats = SampleStats(sample=Sample(name=config.sample_id), site_stats=site_stats,)
+
+    return write_site_stats(sample_stats, config.common.storage_path, config.sample_id)
 
 
 def fastq_extract_run(config: FastqExtractConfig) -> int:

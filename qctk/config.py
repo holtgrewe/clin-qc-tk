@@ -15,6 +15,9 @@ DEFAULT_KMER_LENGTH = 21
 #: Default thershold to use.
 DEFAULT_THRESHOLD = 0.1
 
+#: The default minimal coverage.
+DEFAULT_MIN_COV = 5
+
 
 #: Enumeration of the supported storage engines.
 class StorageEngine(enum.Enum):

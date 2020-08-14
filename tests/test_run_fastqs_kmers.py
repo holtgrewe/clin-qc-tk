@@ -8,9 +8,6 @@ from qctk.models import fastq
 from qctk.__main__ import main
 
 
-# TODO: run from command line / mock out fastq_kmers_run
-
-
 def test_fastq_kmers_run_smoke_test(tmp_path):
     path_out = tmp_path / "out" / "out.tsv"
     path_out.parent.mkdir()
