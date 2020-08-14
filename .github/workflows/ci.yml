@@ -11,10 +11,13 @@ jobs:
         python-version: [3.6, 3.7, 3.8]
 
     steps:
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v1
+      - name: Install Python via conda.
+        uses: s-weigand/setup-conda@v1
         with:
           python-version: ${{ matrix.python-version }}
+          conda-channels: defaults,bioconda,conda-forge
+      - name: Install some dependencies via conda.
+        run: conda install -y samtools bcftools
       - name: Checkout repository
         uses: actions/checkout@v2
         with:
